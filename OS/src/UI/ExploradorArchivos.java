@@ -4,6 +4,7 @@
  */
 package UI;
 
+import Estructuras.NodoCarpeta;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -99,6 +100,7 @@ public class ExploradorArchivos extends JInternalFrame {
         barra.add(crearBoton("Eliminar", this::onEliminar));
         barra.add(crearBoton("Renombrar", this::onRenombrar));
         barra.add(crearBoton("Abrir", this::onAbrir));
+        barra.add(crearBoton("Refrescar", this::refrescarArbol));
         
         return barra;
         
@@ -112,7 +114,7 @@ public class ExploradorArchivos extends JInternalFrame {
     }
     
     private JSplitPane crearDivisor(){
-        DefaultMutableTreeNode nodoRaiz = construirNodo(carpetaRaiz);
+        DefaultMutableTreeNode nodoRaiz = crearNodoRaizMiPC();
         modeloArbol = new DefaultTreeModel(nodoRaiz);
         arbolCarpetas = new JTree (modeloArbol);
         arbolCarpetas.addTreeSelectionListener(this::onSeleccionCarpeta);
@@ -144,37 +146,83 @@ public class ExploradorArchivos extends JInternalFrame {
     }
     
     
-    
-    private DefaultMutableTreeNode construirNodo(File carpeta){
-        DefaultMutableTreeNode  nodo = new DefaultMutableTreeNode(new NodoCarpeta(carpeta));
-        
-        File[] hijos = carpeta.listFiles(File::isDirectory);
-        if(hijos != null){
-            for (File hijo : hijos){
-                nodo.add(construirNodo(hijo));
+    private DefaultMutableTreeNode crearNodoRaizMiPC(){
+        DefaultMutableTreeNode raiz = new DefaultMutableTreeNode("MI PC");
+        File[] unidades = File.listRoots();
+        if(unidades != null){
+            for(File unidad : unidades){
+                raiz.add(construirNodo(unidad,false));
+                
             }
         }
-        return nodo;
         
+        raiz.add(construirNodo(carpetaRaiz,true));
+        return raiz;
         
     }
+    
+    
+    
+    private DefaultMutableTreeNode construirNodo(File carpeta, boolean recursivo){
+    
+        DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(new NodoCarpeta(carpeta));
+        
+        if(recursivo){
+            File[] hijos = carpeta.listFiles(File::isDirectory);
+            if(hijos!= null){
+                for (File hijo : hijos){
+                    nodo.add(construirNodo(hijo,true));
+                }
+            }
+        }
+        
+        return nodo;
+    }
+    
+    private void cargarHijosSiNecesario(DefaultMutableTreeNode nodo){
+         if (nodo.getChildCount() > 0)
+        return;
+    Object obj = nodo.getUserObject();
+    if (!(obj instanceof NodoCarpeta))
+        return;
+    File carpeta = ((NodoCarpeta) obj).carpeta;
+    File[] hijos = carpeta.listFiles(File::isDirectory);
+    if (hijos != null){
+        for (File hijo : hijos){
+            nodo.add(new DefaultMutableTreeNode(new NodoCarpeta(hijo)));
+        }
+        modeloArbol.reload(nodo);
+    }
+        
+    }
+    
     
     
     
     private void onSeleccionCarpeta(TreeSelectionEvent evt){
-        DefaultMutableTreeNode nodoSeleccionado = (DefaultMutableTreeNode) arbolCarpetas.getLastSelectedPathComponent();
-        
-        if (nodoSeleccionado == null){
-            return;
-        }
-        
-        NodoCarpeta envoltura = (NodoCarpeta) nodoSeleccionado.getUserObject();
-        carpetaSeleccionada = envoltura.carpeta;
-        
-        lblRutaActual.setText("Ruta actual " + carpetaSeleccionada.getAbsolutePath());
-        actualizarTabla();
+    DefaultMutableTreeNode nodoSeleccionado = (DefaultMutableTreeNode) arbolCarpetas.getLastSelectedPathComponent();
+
+    if (nodoSeleccionado == null){
+        return;
+    }
+
+    Object obj = nodoSeleccionado.getUserObject();
+    if (!(obj instanceof NodoCarpeta)){
+        return;
+    }
+    
+    
+     NodoCarpeta envoltura = (NodoCarpeta) obj;
+    carpetaSeleccionada = envoltura.carpeta;
+
+    lblRutaActual.setText("Ruta actual " + carpetaSeleccionada.getAbsolutePath());
+    cargarHijosSiNecesario(nodoSeleccionado);
+    actualizarTabla();
         
     }
+    
+    
+    
     
     private void actualizarTabla(){
         modeloTabla.setRowCount(0);
@@ -231,9 +279,9 @@ public class ExploradorArchivos extends JInternalFrame {
     
     
     private void refrescarArbol(){
-        DefaultMutableTreeNode nuevaRaiz = construirNodo(carpetaRaiz);
+        DefaultMutableTreeNode nuevaRaiz = crearNodoRaizMiPC();
         modeloArbol.setRoot(nuevaRaiz);
-        actualizarTabla();
+         actualizarTabla();
     }
     
     
@@ -283,7 +331,7 @@ public class ExploradorArchivos extends JInternalFrame {
     private void onNuevaCarpeta(){
         if (carpetaSeleccionada == null)
             return;
-        String nombre = JOptionPane.showInputDialog(this, "Nombre de la nueva carpeta:");
+        String nombre = JOptionPane.showInternalInputDialog(this, "Nombre de la nueva carpeta:");
         if (nombre == null || nombre.trim().isEmpty())
             return;
         
@@ -292,14 +340,14 @@ public class ExploradorArchivos extends JInternalFrame {
             refrescarArbol();
         }
         else{
-            JOptionPane.showMessageDialog(this, "No se completo la tarea de crear la carpeta");
+            JOptionPane.showInternalMessageDialog(this, "No se completo la tarea de crear la carpeta");
         }
     }
     
     private void onNuevoArchivo(){
         if (carpetaSeleccionada == null)
             return;
-        String nombre = JOptionPane.showInputDialog(this, "Nombre del nuevo archivo (Incluir extension");
+        String nombre = JOptionPane.showInternalInputDialog(this, "Nombre del nuevo archivo (Incluir extension");
         if (nombre == null || nombre.trim().isEmpty())
             return;
         
@@ -309,10 +357,10 @@ public class ExploradorArchivos extends JInternalFrame {
                 actualizarTabla();
             }
             else{
-                JOptionPane.showMessageDialog(this, "Archivo ya existe");
+                JOptionPane.showInternalMessageDialog(this, "Archivo ya existe");
             }
         }catch (IOException e){
-             JOptionPane.showMessageDialog(this, "Error al crear el archivo: " + e.getMessage());
+             JOptionPane.showInternalMessageDialog(this, "Error al crear el archivo: " + e.getMessage());
         }
     }
     
@@ -330,7 +378,7 @@ public class ExploradorArchivos extends JInternalFrame {
               Files.copy(origen.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 actualizarTabla();
             }catch(IOException e ){
-                JOptionPane.showMessageDialog(this, "Error al importar: " + e.getMessage());
+                JOptionPane.showInternalMessageDialog(this, "Error al importar: " + e.getMessage());
                 
             }
         }
@@ -342,7 +390,7 @@ public class ExploradorArchivos extends JInternalFrame {
     private void onOrganizar(){
         if (carpetaSeleccionada == null)
             return;
-        int confirmar = JOptionPane.showConfirmDialog(this,
+        int confirmar = JOptionPane.showInternalConfirmDialog (this,
             "¿Organizar los archivos de \"" + carpetaSeleccionada.getName() + "\" en subcarpetas por tipo?",
             "Organizar", JOptionPane.YES_NO_OPTION);
         
@@ -351,7 +399,7 @@ public class ExploradorArchivos extends JInternalFrame {
         
         Hilos.OrganizadorHilos hilo = new Hilos.OrganizadorHilos(carpetaSeleccionada, () -> {
         refrescarArbol();
-        JOptionPane.showMessageDialog(this, "Organización completada.");
+        JOptionPane.showInternalMessageDialog(this, "Organización completada.");
         
         
     });
@@ -362,7 +410,7 @@ public class ExploradorArchivos extends JInternalFrame {
     private void onCopiar(){
         archivoCopiado = obtenerSeleccionEnTabla();
         if(archivoCopiado == null){
-            JOptionPane.showMessageDialog(this, "Selecciona un archivo primero");
+            JOptionPane.showInternalMessageDialog(this, "Selecciona un archivo primero");
         }
     }
     
@@ -371,7 +419,7 @@ public class ExploradorArchivos extends JInternalFrame {
         if (archivoCopiado == null || carpetaSeleccionada == null)
             return;
         if (archivoCopiado.isDirectory()){
-            JOptionPane.showMessageDialog(this, "Solo un archivo singular, no multiples");
+            JOptionPane.showInternalMessageDialog(this, "Solo un archivo singular, no multiples");
             return;
         }
         
@@ -380,7 +428,7 @@ public class ExploradorArchivos extends JInternalFrame {
             Files.copy(archivoCopiado.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
             actualizarTabla();
         } catch(IOException e){
-            JOptionPane.showMessageDialog(this, "Error al pegar: " +e.getMessage());
+            JOptionPane.showInternalMessageDialog(this, "Error al pegar: " +e.getMessage());
         }
         
         
@@ -390,11 +438,11 @@ public class ExploradorArchivos extends JInternalFrame {
     private void onEliminar(){
         File seleccionado = obtenerSeleccionEnTabla();
         if (seleccionado == null){
-            JOptionPane.showMessageDialog(this, "Selecciona un archivo o carpeta primero.");
+            JOptionPane.showInternalMessageDialog(this, "Selecciona un archivo o carpeta primero.");
             return;
         }
         
-        int confirmar = JOptionPane.showConfirmDialog(this, "¿Eliminar \"" + seleccionado.getName() + "\"?", "Confirmar",JOptionPane.YES_NO_OPTION);
+        int confirmar = JOptionPane.showInternalConfirmDialog (this, "¿Eliminar \"" + seleccionado.getName() + "\"?", "Confirmar",JOptionPane.YES_NO_OPTION);
         
         if (confirmar == JOptionPane.YES_OPTION){
             eliminar(seleccionado);
@@ -419,11 +467,11 @@ public class ExploradorArchivos extends JInternalFrame {
     private void onRenombrar(){
         File seleccionado = obtenerSeleccionEnTabla();
         if(seleccionado == null){
-            JOptionPane.showMessageDialog(this, "Selecciona un archivo o carpeta primero");
+            JOptionPane.showInternalMessageDialog(this, "Selecciona un archivo o carpeta primero");
             return;
         }
         
-        String nuevoNombre = JOptionPane.showInputDialog(this, "Nuevo nombre:", seleccionado.getName());
+        String nuevoNombre = (String) JOptionPane.showInternalInputDialog(this, "Nuevo nombre:", "Renombrar", JOptionPane.PLAIN_MESSAGE, null, null, seleccionado.getName());
         if (nuevoNombre == null || nuevoNombre.trim().isEmpty())
             return;
         File renombrado = new File(seleccionado.getParentFile(), nuevoNombre.trim());
@@ -431,7 +479,7 @@ public class ExploradorArchivos extends JInternalFrame {
             refrescarArbol();
         }
         else{
-            JOptionPane.showMessageDialog(this, "Renombrado fallido");
+            JOptionPane.showInternalMessageDialog(this, "Renombrado fallido");
         }
         
     }
@@ -456,7 +504,7 @@ public class ExploradorArchivos extends JInternalFrame {
                 }
                 Desktop.getDesktop().open(seleccionado);
             } catch (IOException e ){
-                JOptionPane.showMessageDialog(this, "No se pudo abrir el archivo: " +e.getMessage());
+                JOptionPane.showInternalMessageDialog(this, "No se pudo abrir el archivo: " +e.getMessage());
             }
         }
     }
@@ -525,20 +573,7 @@ public class ExploradorArchivos extends JInternalFrame {
     }
 }
     
-    private static class NodoCarpeta{
-        File carpeta;
-        
-        NodoCarpeta(File carpeta){
-            this.carpeta = carpeta;
-        }
-        
-        
-        public String toString(){
-            return carpeta.getName();
-        }
-        
-        
-    }
+    
     
     public void setAlAbrirMusica(java.util.function.Consumer<File> accion){
     this.alAbrirMusica = accion;

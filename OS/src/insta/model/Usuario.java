@@ -3,34 +3,38 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package insta.model;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.LocalDate;
+
 /**
  *
  * @author riche
  */
 public class Usuario extends Persona {
    private static final long serialVersionUID = 1L;
-   private String   username;        
+   private String username;
    private String password;
    private LocalDate fechaRegistro;
-   private boolean  activo;
-   private TipoCuenta tipoCuenta;      
-   private String  rutaFotoPerfil;  
-   private String presentacion;    
+   private boolean activo;
+   private TipoCuenta tipoCuenta;
+   private String rutaFotoPerfil;
+   private String presentacion;
+
    public Usuario(String nombreCompleto, String genero, String username,
-               String password, int edad, String tipoCuentaStr, String rutaFotoPerfil) {
+         String password, int edad, String tipoCuentaStr, String rutaFotoPerfil) {
       super(nombreCompleto, genero, edad);
-      this.username  = username;
-      this.password  = password;
-      this.tipoCuenta  = parseTipoCuenta(tipoCuentaStr);
+      this.username = username;
+      this.password = password;
+      this.tipoCuenta = parseTipoCuenta(tipoCuentaStr);
       this.rutaFotoPerfil = rutaFotoPerfil;
-      this.presentacion = ""; 
-      this.fechaRegistro  = LocalDate.now();
-      this.activo  = true;
+      this.presentacion = "";
+      this.fechaRegistro = LocalDate.now();
+      this.activo = true;
    }
+
    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
       ObjectInputStream.GetField fields = ois.readFields();
       username = (String) fields.get("username", null);
@@ -48,11 +52,14 @@ public class Usuario extends Persona {
          tipoCuenta = TipoCuenta.PUBLICA;
       }
    }
+
    private void writeObject(ObjectOutputStream oos) throws IOException {
       oos.defaultWriteObject();
    }
+
    private static TipoCuenta parseTipoCuenta(String valor) {
-      if (valor == null) return TipoCuenta.PUBLICA;
+      if (valor == null)
+         return TipoCuenta.PUBLICA;
       try {
          return TipoCuenta.valueOf(valor.toUpperCase());
       } catch (IllegalArgumentException e) {
@@ -60,46 +67,56 @@ public class Usuario extends Persona {
       }
    }
 
-   public String     getUsername() { 
-       return username;                                         
-   }
-   public String     getPassword() { 
-       return password;                                         
+   public String getUsername() {
+      return username;
    }
 
-   public LocalDate  getFechaRegistro()  {
-       return fechaRegistro;   
+   public String getPassword() {
+      return password;
    }
-   public boolean    isActivo()  { 
-       return activo; 
+
+   public LocalDate getFechaRegistro() {
+      return fechaRegistro;
    }
-   public TipoCuenta getTipoCuentaEnum() { 
-       return tipoCuenta; 
+
+   public boolean isActivo() {
+      return activo;
    }
-   public String     getTipoCuenta()  { 
-       return tipoCuenta != null ? tipoCuenta.name() : "PUBLICA";
+
+   public TipoCuenta getTipoCuentaEnum() {
+      return tipoCuenta;
    }
-   public String     getRutaFotoPerfil() 
-   { return rutaFotoPerfil;   
+
+   public String getTipoCuenta() {
+      return tipoCuenta != null ? tipoCuenta.name() : "PUBLICA";
    }
-   public String     getPresentacion()  
-   { return presentacion;   
+
+   public String getRutaFotoPerfil() {
+      return rutaFotoPerfil;
    }
-   public void setActivo(boolean activo)           { 
-       this.activo   = activo;  
+
+   public String getPresentacion() {
+      return presentacion;
    }
-   public void setTipoCuenta(String tipoCuentaStr) { 
-       this.tipoCuenta  = parseTipoCuenta(tipoCuentaStr); 
+
+   public void setActivo(boolean activo) {
+      this.activo = activo;
    }
-   public void setTipoCuentaEnum(TipoCuenta tc)    { 
-       this.tipoCuenta 
-               = tc;      
+
+   public void setTipoCuenta(String tipoCuentaStr) {
+      this.tipoCuenta = parseTipoCuenta(tipoCuentaStr);
    }
-   public void setRutaFotoPerfil(String ruta)   { 
-       this.rutaFotoPerfil = ruta;                    
+
+   public void setTipoCuentaEnum(TipoCuenta tc) {
+      this.tipoCuenta = tc;
    }
-   public void setPassword(String password)  { 
-       this.password       = password;                
+
+   public void setRutaFotoPerfil(String ruta) {
+      this.rutaFotoPerfil = ruta;
+   }
+
+   public void setPassword(String password) {
+      this.password = password;
    }
 
    public void setPresentacion(String pres) {

@@ -129,15 +129,16 @@ public class CMD extends JInternalFrame {
         
         switch(cmd){
             case "help":
-            appendText("MKDIR <nombre>   Crea una nueva carpeta\n");
-            appendText("RM <nombre>      Elimina una carpeta o archivo\n");
-            appendText("CD <carpeta      Cambia a la carpeta indicada\n");
-            appendText("CD..             Regresa a la carpeta anterior\n");
-            appendText("DIR              Lista las carpetas y archivos de la carpeta actual\n");
-            appendText("DATE             Muestra la fecha actual\n");
-            appendText("TIME             Muestra la hora actual\n");
-            appendText("CLS              Limpia la pantalla\n");
-            appendText("EXIT             Cierra la consola\n");
+            appendText("MKDIR <nombre>     Crea una nueva carpeta\n");
+            appendText("RM <nombre>        Elimina una carpeta o archivo\n");
+            appendText("CD <carpeta        Cambia a la carpeta indicada\n");
+            appendText("CD..               Regresa a la carpeta anterior\n");
+            appendText("DIR                Lista las carpetas y archivos de la carpeta actual\n");
+            appendText("DATE               Muestra la fecha actual\n");
+            appendText("TIME               Muestra la hora actual\n");
+            appendText("CLS                Limpia la pantalla\n");
+            appendText("EXIT               Cierra la consola\n");
+            appendText("COPY NUL <nombre   Crea un archivo vacío\n");
             break;
             
             case "mkdir":
@@ -242,6 +243,28 @@ public class CMD extends JInternalFrame {
                 
             case "exit":
                 dispose();
+                break;
+                
+            case "copy":
+                if (partes.length < 3 || !partes[1].equalsIgnoreCase("nul")){
+                    appendText("Sintaxis: copy nul <nombre>\n");
+                    return;
+                }
+                String nombreCopy = raw.substring(raw.indexOf(partes[2])).trim();
+                File nuevoCopy = new File(carpetaActual,nombreCopy);
+                
+                try{
+                    if (nuevoCopy.createNewFile()){
+                        appendText("Archivo creado: " + nombreCopy + "\n");
+                    }
+                    else{
+                        appendText("Ya existe un archivo o carpeta con ese nombre.\n");
+                    }
+                } catch(Exception e){
+                    appendText("No se pudo crear el archivo: " + e.getMessage() + "\n");
+
+                }
+                
                 break;
                 
             default:

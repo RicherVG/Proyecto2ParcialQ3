@@ -125,7 +125,28 @@ public class Escritorio extends JFrame {
                    }
                } catch (Exception ignored) {}
            }
-           instaFrame.setVisible(true);
+
+           // Envolver el MainFrame dentro de un JInternalFrame para que viva en el escritorio
+           javax.swing.JInternalFrame internalFrame = new javax.swing.JInternalFrame(
+                   "INSTA+", true, true, true, true);
+           internalFrame.setSize(instaFrame.getSize());
+           internalFrame.setLayout(new BorderLayout());
+
+           // Transferir el contenido del JFrame al JInternalFrame
+           internalFrame.setContentPane(instaFrame.getContentPane());
+           internalFrame.setJMenuBar(instaFrame.getJMenuBar());
+
+           // Cerrar sólo el internal frame, no el OS
+           internalFrame.setDefaultCloseOperation(javax.swing.JInternalFrame.DISPOSE_ON_CLOSE);
+
+           // Añadir al escritorio y mostrar
+           areaEscritorio.add(internalFrame);
+           internalFrame.setVisible(true);
+
+           // Centrar dentro del escritorio
+           int x = (areaEscritorio.getWidth() - internalFrame.getWidth()) / 2;
+           int y = (areaEscritorio.getHeight() - internalFrame.getHeight()) / 2;
+           internalFrame.setLocation(Math.max(0, x), Math.max(0, y));
        });
    }
    

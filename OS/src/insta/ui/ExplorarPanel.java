@@ -128,6 +128,23 @@ public class ExplorarPanel extends JPanel {
       JPanel card = crearTarjetaPostFull(frame, p, bg);
       card.addMouseListener(new ModalBgMouseHandler(null, null)); // Consume clics
       bg.add(card);
+      
+      JButton btnCerrar = new JButton("✕");
+      btnCerrar.setFont(new Font("SansSerif", Font.BOLD,16));
+      btnCerrar.setForeground(Color.WHITE);
+      btnCerrar.setBackground(new Color(0, 0, 0, 120));
+      btnCerrar.setBorder(new EmptyBorder(6, 12, 6, 12));
+      btnCerrar.setFocusPainted(false);
+      btnCerrar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      btnCerrar.addActionListener(e -> { lp.remove(bg); lp.repaint(); });
+      JPanel barraSuperior = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
+      barraSuperior.setOpaque(false);
+      barraSuperior.add(btnCerrar);
+      bg.add(barraSuperior, BorderLayout.NORTH);
+      
+      
+      
+      
       lp.add(bg, JLayeredPane.MODAL_LAYER);
       lp.moveToFront(bg);
       lp.revalidate();

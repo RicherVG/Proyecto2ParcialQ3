@@ -83,9 +83,35 @@ public class EditorTexto extends JInternalFrame {
         JScrollPane scroll = new JScrollPane(areaTexto);
         add(crearBarraHerramientas(), BorderLayout.NORTH);
         add(scroll, BorderLayout.CENTER);
-        
+        aplicarEstilo();
         
     }
+    
+    private void aplicarEstilo(){
+        Color grisClaro = new Color(240,240,240);
+        getContentPane().setBackground(Color.WHITE);
+        areaTexto.setMargin(new Insets(10,12,10,12));
+        
+        estilizarPanel(getContentPane(),grisClaro);
+        
+    }
+    
+    private void estilizarPanel(Container  contenedor, Color color){
+        for(Component compo : contenedor.getComponents()){
+            if (compo instanceof JPanel){
+                compo.setBackground(color);
+            }
+            if (compo instanceof JLabel){
+                ((JLabel) compo).setOpaque(true);
+                compo.setBackground(color);
+            }
+            if(compo instanceof Container){
+                estilizarPanel((Container) compo, color);
+            }
+        }
+    }
+    
+    
     
     
     private JPanel crearBarraHerramientas(){
@@ -182,7 +208,7 @@ public class EditorTexto extends JInternalFrame {
           escritor.write(areaTexto.getText());
           setTitle("Notepad - " +archivoActual.getName());
       } catch(IOException e){
-          JOptionPane.showMessageDialog(this, "Error al guardar: " +e.getMessage());
+          JOptionPane.showInternalMessageDialog(this, "Error al guardar: " +e.getMessage());
       }
       
       
@@ -207,26 +233,14 @@ public class EditorTexto extends JInternalFrame {
            areaTexto.setText(contenido.toString());
            setTitle("Notepad - " +archivoActual.getName());
        }catch (IOException e){
-           JOptionPane.showMessageDialog(this, "Error al abrir: " + e.getMessage());
+           JOptionPane.showInternalMessageDialog(this, "Error al abrir: " + e.getMessage());
        }
        
     }
     
    
     
-   private static class ParrafoConWrap extends ParagraphView{
-    ParrafoConWrap(Element elem){
-        super(elem);
-    }
-
-    @Override
-    protected SizeRequirements calculateMinorAxisRequirements(int axis, SizeRequirements r){
-        SizeRequirements req = super.calculateMinorAxisRequirements(axis, r);
-        req.minimum = 0;
-        req.preferred = 0;
-        return req;
-    }
-}
+  
     
     
 }

@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package insta.ui;
+
 import insta.model.Mensaje;
 import insta.model.Sticker;
 import insta.model.Usuario;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import javax.imageio.ImageIO;
+
 /**
  *
  * @author riche
@@ -31,7 +33,8 @@ public class InboxPanel extends JPanel {
    private JPanel mensajesPanel;
    private JScrollPane scrollMensajes;
    private JTextField txtMensaje;
-   private JLabel lblChatHeader; 
+   private JLabel lblChatHeader;
+
    public InboxPanel(MainFrame frame) {
       this.frame = frame;
       setLayout(new BorderLayout());
@@ -39,6 +42,7 @@ public class InboxPanel extends JPanel {
       buildUI();
       configurarSocketListener();
    }
+
    private void configurarSocketListener() {
       Timer checkSocket = new Timer(1000, e -> {
          if (frame.getClienteSocket() != null) {
@@ -55,11 +59,12 @@ public class InboxPanel extends JPanel {
                   }
                });
             });
-            ((Timer)e.getSource()).stop();
+            ((Timer) e.getSource()).stop();
          }
       });
       checkSocket.start();
    }
+
    private void buildUI() {
       JPanel izquierdo = new JPanel(new BorderLayout());
       izquierdo.setPreferredSize(new Dimension(320, 0));
@@ -199,6 +204,7 @@ public class InboxPanel extends JPanel {
       derechoCard.show(derechoPanel, CARD_VACIO);
       add(derechoPanel, BorderLayout.CENTER);
    }
+
    public void cargarConversaciones() {
       listaConvPanel.removeAll();
       String miUser = frame.getSession().getUsername();
@@ -221,10 +227,12 @@ public class InboxPanel extends JPanel {
       listaConvPanel.revalidate();
       listaConvPanel.repaint();
    }
+
    public void abrirConversacionCon(String username) {
-      cargarConversaciones(); 
-      abrirConversacion(username); 
+      cargarConversaciones();
+      abrirConversacion(username);
    }
+
    private JPanel crearItemConversacion(String otro) {
       JPanel item = new JPanel(new BorderLayout(10, 0));
       item.setBackground(Color.WHITE);
@@ -291,6 +299,7 @@ public class InboxPanel extends JPanel {
       item.addMouseListener(new ConvItemMouseHandler(item, center, eastPanel, otro, bgNormal));
       return item;
    }
+
    private Icon buildAvatarIcon(String username, int size) {
       try {
          Usuario u = frame.getGestorUsuarios().buscarExacto(username);
@@ -303,6 +312,7 @@ public class InboxPanel extends JPanel {
       }
       return new ImageIcon(defaultAvatar(size));
    }
+
    private BufferedImage defaultAvatar(int size) {
       BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g = img.createGraphics();
@@ -318,6 +328,7 @@ public class InboxPanel extends JPanel {
       g.dispose();
       return img;
    }
+
    private void abrirConversacion(String otro) {
       conversacionActual = otro;
       lblChatHeader.setText("@" + otro);
@@ -326,10 +337,11 @@ public class InboxPanel extends JPanel {
       try {
          frame.getGestorInbox().marcarLeido(frame.getSession().getUsername(), otro);
          frame.refreshSidebar();
-         cargarConversaciones(); 
+         cargarConversaciones();
       } catch (IOException ignored) {
       }
    }
+
    private void cargarMensajesConversacion(String otro) {
       mensajesPanel.removeAll();
       String miUser = frame.getSession().getUsername();
@@ -360,6 +372,7 @@ public class InboxPanel extends JPanel {
          bar.setValue(bar.getMaximum());
       });
    }
+
    private JPanel crearBurbuja(Mensaje m, String miUser) {
       boolean esMio = m.getEmisor().equalsIgnoreCase(miUser);
       JPanel fila = new JPanel(new BorderLayout());
@@ -439,6 +452,7 @@ public class InboxPanel extends JPanel {
       });
       return finalWrapper;
    }
+
    private void enviarTexto() {
       if (conversacionActual == null)
          return;
@@ -468,6 +482,7 @@ public class InboxPanel extends JPanel {
          frame.mostrarToast("Error: " + ex.getMessage());
       }
    }
+
    private void enviarImagen() {
       if (conversacionActual == null)
          return;
@@ -510,6 +525,7 @@ public class InboxPanel extends JPanel {
          }
       }
    }
+
    private void mostrarSelectorStickers() {
       if (conversacionActual == null)
          return;
@@ -518,7 +534,7 @@ public class InboxPanel extends JPanel {
       JPanel modalBg = new JPanel(new GridBagLayout());
       modalBg.setBackground(new Color(0, 0, 0, 140));
       modalBg.setBounds(0, 0, lp.getWidth(), lp.getHeight());
-      modalBg.addMouseListener(new InboxEmptyMouseHandler()); 
+      modalBg.addMouseListener(new InboxEmptyMouseHandler());
       JPanel dialog = new JPanel(new BorderLayout());
       dialog.setBackground(Color.WHITE);
       dialog.setPreferredSize(new Dimension(380, 450));
@@ -540,7 +556,7 @@ public class InboxPanel extends JPanel {
       });
       header.add(btnClose, BorderLayout.EAST);
       dialog.add(header, BorderLayout.NORTH);
-      JPanel grid = new JPanel(new GridLayout(0, 3, 10, 10)); 
+      JPanel grid = new JPanel(new GridLayout(0, 3, 10, 10));
       grid.setBackground(Color.WHITE);
       grid.setBorder(new EmptyBorder(15, 15, 15, 15));
       JButton btnAdd = new JButton("+");
@@ -560,7 +576,7 @@ public class InboxPanel extends JPanel {
                frame.mostrarToast("Sticker personal añadido");
                lp.remove(modalBg);
                lp.repaint();
-               mostrarSelectorStickers(); 
+               mostrarSelectorStickers();
             } catch (IOException ex) {
                frame.mostrarToast("Error: " + ex.getMessage());
             }
@@ -611,6 +627,7 @@ public class InboxPanel extends JPanel {
       lp.revalidate();
       lp.repaint();
    }
+
    private void enviarSticker(String nombreSticker) {
       String miUser = frame.getSession().getUsername();
       try {
@@ -630,6 +647,7 @@ public class InboxPanel extends JPanel {
          frame.mostrarToast("Error: " + ex.getMessage());
       }
    }
+
    private void nuevaConversacion() {
       frame.mostrarInput(
             "Nueva conversación",
@@ -665,6 +683,7 @@ public class InboxPanel extends JPanel {
                }
             });
    }
+
    private void eliminarConversacion(String otro) {
       frame.mostrarConfirmacion(
             "Eliminar",
@@ -683,9 +702,12 @@ public class InboxPanel extends JPanel {
                }
             });
    }
+
    private class NewConvMouseHandler extends MouseAdapter {
       @Override
-      public void mouseClicked(MouseEvent e) { nuevaConversacion(); }
+      public void mouseClicked(MouseEvent e) {
+         nuevaConversacion();
+      }
    }
 
    private class DMIconLabel extends JLabel {
@@ -710,10 +732,12 @@ public class InboxPanel extends JPanel {
    private static class MessagePlaceholderHandler extends FocusAdapter {
       private final JTextField tf;
       private final String ph;
+
       public MessagePlaceholderHandler(JTextField tf, String ph) {
          this.tf = tf;
          this.ph = ph;
       }
+
       @Override
       public void focusGained(FocusEvent e) {
          if (tf.getText().equals(ph)) {
@@ -721,6 +745,7 @@ public class InboxPanel extends JPanel {
             tf.setForeground(Color.BLACK);
          }
       }
+
       @Override
       public void focusLost(FocusEvent e) {
          if (tf.getText().isEmpty()) {
@@ -734,29 +759,45 @@ public class InboxPanel extends JPanel {
       private final JPanel item, center, east;
       private final String otro;
       private final Color bgNormal;
+
       public ConvItemMouseHandler(JPanel i, JPanel c, JPanel e, String o, Color b) {
-         this.item = i; this.center = c; this.east = e; this.otro = o; this.bgNormal = b;
+         this.item = i;
+         this.center = c;
+         this.east = e;
+         this.otro = o;
+         this.bgNormal = b;
       }
+
       @Override
-      public void mouseClicked(MouseEvent e) { abrirConversacion(otro); }
+      public void mouseClicked(MouseEvent e) {
+         abrirConversacion(otro);
+      }
+
       @Override
       public void mouseEntered(MouseEvent e) {
          Color h = new Color(245, 245, 245);
-         item.setBackground(h); center.setBackground(h); east.setBackground(h);
+         item.setBackground(h);
+         center.setBackground(h);
+         east.setBackground(h);
       }
+
       @Override
       public void mouseExited(MouseEvent e) {
-         item.setBackground(bgNormal); center.setBackground(bgNormal); east.setBackground(bgNormal);
+         item.setBackground(bgNormal);
+         center.setBackground(bgNormal);
+         east.setBackground(bgNormal);
       }
    }
 
    private static class ChatBubblePanel extends JPanel {
       private final boolean esMio;
+
       public ChatBubblePanel(boolean esMio) {
          super(new BorderLayout());
          this.esMio = esMio;
          setOpaque(false);
       }
+
       @Override
       protected void paintComponent(Graphics g) {
          Graphics2D g2 = (Graphics2D) g.create();
@@ -768,5 +809,6 @@ public class InboxPanel extends JPanel {
       }
    }
 
-   private static class InboxEmptyMouseHandler extends MouseAdapter {}
+   private static class InboxEmptyMouseHandler extends MouseAdapter {
+   }
 }

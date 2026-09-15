@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package insta.gestor;
+
 import insta.model.CuentaDesactivadaException;
 import insta.model.ListaEnlazada;
 import insta.model.Usuario;
@@ -12,6 +13,7 @@ import insta.storage.FileUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  *
  * @author riche
@@ -28,6 +30,7 @@ public class GestorUsuarios {
       todos.add(nuevo);
       guardarTodos(todos);
    }
+
    public Usuario login(String username, String password) throws IOException, CuentaDesactivadaException {
       for (Usuario u : cargarTodos()) {
          if (u.getUsername().equalsIgnoreCase(username)
@@ -35,15 +38,17 @@ public class GestorUsuarios {
             if (!u.isActivo()) {
                throw new CuentaDesactivadaException(u.getUsername());
             }
-            return u; 
+            return u;
          }
       }
       return null;
    }
+
    public List<Usuario> buscarPorUsername(String parcial) throws IOException {
       ListaEnlazada<Usuario> resultado = buscarPorUsernameEnlazada(parcial);
       return resultado.toList();
    }
+
    public ListaEnlazada<Usuario> buscarPorUsernameEnlazada(String parcial) throws IOException {
       ListaEnlazada<Usuario> resultado = new ListaEnlazada<>();
       String p = parcial.toLowerCase();
@@ -54,6 +59,7 @@ public class GestorUsuarios {
       }
       return resultado;
    }
+
    public Usuario buscarExacto(String username) throws IOException {
       for (Usuario u : cargarTodos()) {
          if (u.getUsername().equalsIgnoreCase(username))
@@ -61,6 +67,7 @@ public class GestorUsuarios {
       }
       return null;
    }
+
    public void desactivar(String username) throws IOException {
       List<Usuario> todos = cargarTodos();
       for (Usuario u : todos) {
@@ -71,6 +78,7 @@ public class GestorUsuarios {
       }
       guardarTodos(todos);
    }
+
    public void activar(String username) throws IOException {
       List<Usuario> todos = cargarTodos();
       for (Usuario u : todos) {
@@ -81,6 +89,7 @@ public class GestorUsuarios {
       }
       guardarTodos(todos);
    }
+
    public void actualizar(Usuario modificado) throws IOException {
       List<Usuario> todos = cargarTodos();
       for (int i = 0; i < todos.size(); i++) {
@@ -91,12 +100,15 @@ public class GestorUsuarios {
       }
       guardarTodos(todos);
    }
+
    public List<Usuario> cargarTodos() throws IOException {
       return FileUtils.loadList(AppPaths.USERS_FILE);
    }
+
    public void guardarTodos(List<Usuario> usuarios) throws IOException {
       FileUtils.saveList(AppPaths.USERS_FILE, usuarios);
    }
+
    public boolean usernameExiste(String username) throws IOException {
       for (Usuario u : cargarTodos()) {
          if (u.getUsername().equalsIgnoreCase(username))

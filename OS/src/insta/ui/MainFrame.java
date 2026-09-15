@@ -44,7 +44,7 @@ public class MainFrame extends JFrame {
          } catch (Exception ignored) {}
       }).start();
       setTitle("InstaVisual");
-      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
       setSize(Screens.W(), Screens.H());
       setMinimumSize(new Dimension(1024, 720));
       setLocationRelativeTo(null);

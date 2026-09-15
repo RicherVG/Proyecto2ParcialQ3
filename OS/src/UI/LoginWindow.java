@@ -6,14 +6,21 @@ package UI;
 
 import Excepciones.CuentaDesactivadaException;
 import Persistencia.GestorUsuario;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -78,7 +85,18 @@ public class LoginWindow extends JFrame {
         tarjeta.add(panelContra);
         
         contenedor.add(tarjeta);
-        add(contenedor);
+      JButton btnApagar = crearBotonApagado();
+      JPanel esquina = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+      esquina.setOpaque(false);
+      esquina.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 20));
+      esquina.add(btnApagar);
+        
+      JPanel raiz = new JPanel(new BorderLayout());
+      raiz.setBackground(new Color(30, 30, 40));
+      raiz.add(contenedor, BorderLayout.CENTER);
+      raiz.add(esquina, BorderLayout.SOUTH);
+      add(raiz);
+       
         
         
         
@@ -144,115 +162,6 @@ public class LoginWindow extends JFrame {
     }
     
     
-    private static class FlechaBoton extends JButton{
-        FlechaBoton(){
-            setFocusable(false);
-            setBorderPainted(false);
-            setContentAreaFilled(false);
-            setOpaque(false);
-            
-        }
-        
-        protected void paintComponent(java.awt.Graphics g){
-            java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
-            g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(Color.WHITE);
-            g2.setStroke(new java.awt.BasicStroke(2.2f,java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_ROUND));
-            
-            int w = getWidth();
-            int h = getHeight();
-            int cx = w/2;
-            int cy = h / 2;
-            int tam = Math.min(w, h) / 4;
-            
-            g2.drawLine(cx - tam, cy, cx + tam, cy);
-            g2.drawLine(cx + tam - 5, cy - 5, cx + tam, cy);
-            g2.drawLine(cx + tam - 5, cy + 5, cx + tam, cy);
-            
-            g2.dispose();
-        }
-    }
-    
-    
-    private static class CircularAvatar extends javax.swing.JComponent{
-        private final int diametro;
-        
-        
-        CircularAvatar(int diametro){
-            this.diametro = diametro;
-            setPreferredSize(new Dimension(diametro,diametro));
-            setMaximumSize(new Dimension(diametro,diametro));
-        }
-        
-        protected void paintComponent(java.awt.Graphics g ){
-            java.awt.Graphics2D g2 = (java.awt.Graphics2D) g;
-            g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-            
-            g2.setColor(new Color(120,120,120));
-            g2.fillRoundRect(0, 0, diametro, diametro, diametro / 6, diametro / 6);
-            
-            float grosor = diametro * 0.06f;
-            g2.setStroke(new java.awt.BasicStroke(grosor,java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_ROUND));
-            g2.setColor(Color.WHITE);
-            
-            int cabezaDiam = (int)(diametro * 0.34);
-            int cabezaX = (diametro - cabezaDiam) /2;
-            int cabezaY = (int) (diametro * 0.16);
-            g2.drawOval(cabezaX, cabezaY, cabezaDiam, cabezaDiam);
-            
-            
-            int cuerpoAncho = (int) (diametro * 0.72);
-            int cuerpoAlto = (int)(diametro * 0.62);
-            int cuerpoX = (diametro - cuerpoAncho) / 2;
-            int cuerpoY = cabezaY + cabezaDiam - (int) (diametro * 0.02);
-            g2.drawArc(cuerpoX, cuerpoY, cuerpoAncho, cuerpoAlto, 0, 180);
-            
-        }
-        
-        
-    }
-    
-    
-    private static class CampoTransparente extends JTextField{
-        CampoTransparente(){
-            setOpaque(false);
-            setBorder(javax.swing.BorderFactory.createEmptyBorder(8,14,8,14));
-            setCaretColor(Color.WHITE);
-            setFont(getFont().deriveFont(15f));
-        }
-        
-        protected void paintComponent(java.awt.Graphics g){
-            java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
-            g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(new Color(255,255,255,45));
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
-            g2.dispose();
-            super.paintComponent(g);
-            
-        }
-        
-    }
-    
-    private static class CampoContraTransparente extends JPasswordField{
-        CampoContraTransparente(){
-            setOpaque(false);
-            setBorder(javax.swing.BorderFactory.createEmptyBorder(8,14,8,14));
-            setCaretColor(Color.WHITE);
-            setFont(getFont().deriveFont(15f));
-        }
-        
-        
-        protected void paintComponent(java.awt.Graphics g){
-            java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
-            g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(new Color(255,255,255,45));
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
-            g2.dispose();
-            super.paintComponent(g);
-        }
-        
-    }
-    
     
     
     private JTextField campoPlaceHolder(String placeholder){
@@ -279,7 +188,35 @@ public class LoginWindow extends JFrame {
        return campo;
     }
     
-    
+    private JButton crearBotonApagado(){
+    JButton boton = new JButton("⏻");
+    boton.setToolTipText("Apagar");
+    boton.setFocusPainted(false);
+    boton.setBorderPainted(false);
+    boton.setContentAreaFilled(false);
+    boton.setForeground(new Color(210, 210, 210));
+    boton.setFont(new Font("Segoe UI", Font.PLAIN, 22));
+
+    java.net.URL ruta = getClass().getResource("/ImagenesOS/apagado.png");
+    if (ruta != null){
+        Image img = new ImageIcon(ruta).getImage();
+        Image escalada = img.getScaledInstance(28, 28, Image.SCALE_SMOOTH);
+        boton.setIcon(new ImageIcon(escalada));
+        boton.setText("");
+    }
+
+    boton.addActionListener(e -> onApagar());
+    return boton;
+}
+
+private void onApagar(){
+    int opcion = JOptionPane.showConfirmDialog(this,
+            "¿Desea apagar el equipo?", "Apagar",
+            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+    if (opcion == JOptionPane.YES_OPTION){
+        System.exit(0);
+    }
+}
     
     private void onLogin(ActionEvent evt){
         String username = txtUsername.getText().trim();

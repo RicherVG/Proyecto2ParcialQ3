@@ -40,7 +40,7 @@ public class Galeria extends JInternalFrame {
         super("Galería de imágenes",true,true,true,true);
         this.usuarioActual = usuario;
         this.imagenes = new ArrayList<>();
-        this.carpetaImagenes = new File("Z" + File.separator + usuario.getUsername());
+        this.carpetaImagenes = new File("Z" + File.separator + usuario.getUsername() + File.separator + "Imagenes");
         setSize(640,520);
         construirVentana();
         cargarCarpeta(carpetaImagenes);
@@ -155,25 +155,37 @@ public class Galeria extends JInternalFrame {
         
         new SwingWorker<ImageIcon, Void>(){
            protected ImageIcon doInBackground(){
-               Image img = new ImageIcon(archivo.getAbsolutePath()).getImage();
+               ImageIcon icono = new ImageIcon(archivo.getAbsolutePath());
+               Image img = icono.getImage();
+               int anchoImg = icono.getIconWidth();
+               int altoImg = icono.getIconHeight();
+               if(anchoImg <= 0 || altoImg <= 0)
+                   return null;
+               
                int anchoMax = Math.max(lblImagen.getWidth(), 200);
                int altoMax = Math.max(lblImagen.getHeight(), 200);
-               double escala = Math.min(1.0, Math.min((double) anchoMax / img.getWidth(null), (double) altoMax / img.getHeight(null)));
-               int ancho = Math.max(1, (int) (img.getWidth(null) * escala));
-               int alto = Math.max(1, (int) (img.getHeight(null) * escala));
+               double escala = Math.min(1.0, Math.min((double) anchoMax / anchoImg, (double ) altoMax/altoImg));
+               int ancho = Math.max(1,((int) (anchoImg * escala)));
+               int alto = Math.max(1, (int) (altoImg * escala));
+               
                return new ImageIcon(img.getScaledInstance(ancho, alto, Image.SCALE_SMOOTH));
            }
            
-           protected void done(){
-               try{
-                   lblImagen.setIcon(get());
-                   lblImagen.setText("");
-                   
-               } catch(Exception e){
-                   lblImagen.setIcon(null);
-                   lblImagen.setText("No se pudo cargar: " + archivo.getName());
-               }
-           }
+         protected void done(){
+    try{
+        ImageIcon icono = get();
+        if (icono == null){
+            lblImagen.setIcon(null);
+            lblImagen.setText("No se pudo cargar: " + archivo.getName());
+            return;
+        }
+        lblImagen.setIcon(icono);
+        lblImagen.setText("");
+    } catch(Exception e){
+        lblImagen.setIcon(null);
+        lblImagen.setText("No se pudo cargar: " + archivo.getName());
+    }
+}
            
            
            
