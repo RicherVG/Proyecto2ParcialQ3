@@ -6,6 +6,7 @@ package os;
 
 import UI.LoginWindow;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 /**
  *
@@ -17,7 +18,12 @@ public class OS {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-       SwingUtilities.invokeLater(() -> new LoginWindow().setVisible(true));
+       try{
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+       }catch (Exception e){
+           e.printStackTrace();
+       }
+       SwingUtilities.invokeLater(() -> new UI.LoginWindow().setVisible(true));
     }
     
 }

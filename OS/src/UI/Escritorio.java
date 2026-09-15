@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.ImageIcon;
@@ -63,8 +64,16 @@ public class Escritorio extends JFrame {
        JPanel iconosApps = new JPanel(new FlowLayout(FlowLayout.CENTER,10,6));
        iconosApps.setOpaque(false);
        
-       iconosApps.add(crearBotonApp("carpeta.png", "Explorador de archivos",() ->JOptionPane.showMessageDialog(this, "Explorador (Paso 8)") ));
-       iconosApps.add(crearBotonApp("editor.png","Bloc de notas", ()-> JOptionPane.showMessageDialog(this,"Editor (paso10)")));
+       iconosApps.add(crearBotonApp("carpeta.png", "Explorador de archivos",() ->{
+         ExploradorArchivos explorador = new ExploradorArchivos (usuarioActual);
+         areaEscritorio.add(explorador);
+         explorador.setVisible(true);
+       }));
+       iconosApps.add(crearBotonApp("editor.png","NotePad", ()-> { 
+           EditorTexto editor = new EditorTexto(new File("Z" + File.separator + usuarioActual.getUsername()));
+           areaEscritorio.add(editor);
+           editor.setVisible(true);
+       }));
        iconosApps.add(crearBotonApp("imagen.png","Galeria", () -> JOptionPane.showMessageDialog(this, "Galeria (Paso 11)")));
        iconosApps.add(crearBotonApp("terminal.png", "Consola",
                 () -> JOptionPane.showMessageDialog(this, "CMD (Paso 12)")));
