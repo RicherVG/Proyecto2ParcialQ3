@@ -1,5 +1,6 @@
 package UI;
 
+import Persistencia.GestorUsuario;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -31,9 +32,12 @@ public class Escritorio extends JFrame {
     private JDesktopPane areaEscritorio;
     private JPanel barraTareas;
     private JLabel lblReloj;
+    private GestorUsuario gestor;
+    
     
     public Escritorio(Usuarios usuario){
         this.usuarioActual = usuario;
+        this.gestor = new GestorUsuario();
         construirVentana();
         iniciarReloj();
     }
@@ -69,17 +73,34 @@ public class Escritorio extends JFrame {
          areaEscritorio.add(explorador);
          explorador.setVisible(true);
        }));
-       iconosApps.add(crearBotonApp("editor.png","NotePad", ()-> { 
-           EditorTexto editor = new EditorTexto(new File("Z" + File.separator + usuarioActual.getUsername()));
-           areaEscritorio.add(editor);
-           editor.setVisible(true);
+       iconosApps.add(crearBotonApp("carpeta.png", "Explorador de archivos",() ->{
+    ExploradorArchivos explorador = new ExploradorArchivos (usuarioActual);
+    explorador.setAlAbrirMusica(archivo -> {
+        ReproductorMusica reproductor = new ReproductorMusica(usuarioActual, archivo);
+        areaEscritorio.add(reproductor);
+        reproductor.setVisible(true);
+    });
+    areaEscritorio.add(explorador);
+    explorador.setVisible(true);
+}));
+       iconosApps.add(crearBotonApp("imagen.png","Galeria", () -> {
+           Galeria galeria = new Galeria(usuarioActual);
+           areaEscritorio.add(galeria);
+           galeria.setVisible(true);
        }));
-       iconosApps.add(crearBotonApp("imagen.png","Galeria", () -> JOptionPane.showMessageDialog(this, "Galeria (Paso 11)")));
-       iconosApps.add(crearBotonApp("terminal.png", "Consola",
-                () -> JOptionPane.showMessageDialog(this, "CMD (Paso 12)")));
+       iconosApps.add(crearBotonApp("terminal.png", "Consola", () -> {
+           CMD consola = new CMD(usuarioActual);
+           areaEscritorio.add(consola);
+           consola.setVisible(true);
+       
+               }));
 
        iconosApps.add(crearBotonApp("musica.png", "Reproductor de música",
-                () -> JOptionPane.showMessageDialog(this, "Reproductor (Paso 13)")));
+                () -> {
+                    ReproductorMusica reproductor = new ReproductorMusica(usuarioActual);
+                    areaEscritorio.add(reproductor);
+                    reproductor.setVisible(true);
+                }));
 
        iconosApps.add(crearBotonApp("instagram.png", "INSTA+", () -> abrirInsta()));
        
@@ -113,6 +134,9 @@ public class Escritorio extends JFrame {
        });
    }
    
+   
+   
+   
    private JButton BotonInicio(){
        JButton boton = new JButton();
        boton.setPreferredSize(new Dimension(50,44));
@@ -135,11 +159,19 @@ public class Escritorio extends JFrame {
        JPopupMenu menu = new JPopupMenu();
        
        if(usuarioActual.isEsAdmin()){
-           JMenuItem itemAdmin = new JMenuItem("Administrar cuentas");
-           itemAdmin.addActionListener(e ->
-                JOptionPane.showMessageDialog(this, "Administrar cuentas (lo construimos más adelante)"));
-           menu.add(itemAdmin);
-           menu.addSeparator();
+       JMenuItem itemAdmin = new JMenuItem("Administrar cuentas");
+       itemAdmin.addActionListener(e-> {
+           AdministrarCuentas admin = new AdministrarCuentas(usuarioActual);
+           admin.setOnCuentaPropiaEliminada(()->{
+               this.dispose();
+               new UI.LoginWindow().setVisible(true);
+           });
+           areaEscritorio.add(admin);
+           admin.setVisible(true);
+       });
+        
+        menu.add(itemAdmin);
+        menu.addSeparator();
        }
 
        JMenuItem itemCerrarSesion = new JMenuItem("Cerrar sesión");

@@ -53,6 +53,7 @@ public class ExploradorArchivos extends JInternalFrame {
     private JLabel lblRutaActual;
     private JList<String> listaArchivos;
     private DefaultListModel<String>modeloLista;
+    private java.util.function.Consumer<File> alAbrirMusica;
    
     
     
@@ -448,6 +449,11 @@ public class ExploradorArchivos extends JInternalFrame {
         }
         else{
             try{
+                String ext = obtenerExtension(seleccionado).toLowerCase();
+                if(ext.contains("mp3") && alAbrirMusica != null){
+                    alAbrirMusica.accept(seleccionado);
+                    return;
+                }
                 Desktop.getDesktop().open(seleccionado);
             } catch (IOException e ){
                 JOptionPane.showMessageDialog(this, "No se pudo abrir el archivo: " +e.getMessage());
@@ -534,6 +540,8 @@ public class ExploradorArchivos extends JInternalFrame {
         
     }
     
-    
+    public void setAlAbrirMusica(java.util.function.Consumer<File> accion){
+    this.alAbrirMusica = accion;
+}
     
 }

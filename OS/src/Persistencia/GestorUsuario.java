@@ -117,4 +117,28 @@ public class GestorUsuario {
         return usuarios;
     }
     
+    
+    public void eliminarUsuario(Usuarios usuario){
+        usuarios.remove(usuario);
+        guardarUsuarios();
+        File carpeta = new File(RUTA_RAIZ + File.separator + usuario.getUsername());
+        borrar(carpeta);
+    }
+    
+    
+    private void borrar(File f){
+        if (f.isDirectory()){
+            File[] hijos = f.listFiles();
+            if(hijos != null ){
+                for(File h : hijos){
+                    borrar(h);
+                }
+            }
+        }
+        
+        f.delete();
+    }
+    
+    
+    
 }
