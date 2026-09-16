@@ -73,15 +73,10 @@ public class Escritorio extends JFrame {
          areaEscritorio.add(explorador);
          explorador.setVisible(true);
        }));
-       iconosApps.add(crearBotonApp("carpeta.png", "Explorador de archivos",() ->{
-    ExploradorArchivos explorador = new ExploradorArchivos (usuarioActual);
-    explorador.setAlAbrirMusica(archivo -> {
-        ReproductorMusica reproductor = new ReproductorMusica(usuarioActual, archivo);
-        areaEscritorio.add(reproductor);
-        reproductor.setVisible(true);
-    });
-    areaEscritorio.add(explorador);
-    explorador.setVisible(true);
+ iconosApps.add(crearBotonApp("editor.png", "Editor de texto", () -> {
+    EditorTexto editor = new EditorTexto(new File("Z" + File.separator + usuarioActual.getUsername()));
+    areaEscritorio.add(editor);
+    editor.setVisible(true);
 }));
        iconosApps.add(crearBotonApp("imagen.png","Galeria", () -> {
            Galeria galeria = new Galeria(usuarioActual);
